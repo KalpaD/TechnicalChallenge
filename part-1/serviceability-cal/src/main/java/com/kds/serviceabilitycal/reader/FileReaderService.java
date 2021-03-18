@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -22,11 +21,7 @@ public class FileReaderService {
     }
 
     public Application readApplication(String path) throws IOException {
-        String content = readFile(path, StandardCharsets.UTF_8);
+        String content = Files.readString(Paths.get(path), StandardCharsets.UTF_8);
         return objectMapper.readValue(content, Application.class);
-    }
-
-    private String readFile(String path, Charset encoding) throws IOException {
-        return Files.readString(Paths.get(path), encoding);
     }
 }

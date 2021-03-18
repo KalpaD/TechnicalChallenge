@@ -26,9 +26,8 @@ class FileReaderServiceTest {
     }
 
     @Test
-    void readApplication() throws IOException, URISyntaxException {
-        File resource = new ClassPathResource(
-                "application.json").getFile();
+    void readApplication() throws IOException {
+        File resource = new ClassPathResource("application.json").getFile();
         String absolutePath = resource.getAbsolutePath();
         Application application = service.readApplication(absolutePath);
 

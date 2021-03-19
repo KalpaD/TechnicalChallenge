@@ -1,5 +1,8 @@
 package com.kds.serviceabilitycal.model;
 
+/**
+ * This enum class represents the frequency of a transaction.
+ */
 public enum Frequency {
 
     M("Monthly"),

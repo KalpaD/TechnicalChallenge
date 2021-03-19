@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
+/**
+ * This class represents loan application.
+ */
 public class Application {
 
     @JsonProperty("incomes")

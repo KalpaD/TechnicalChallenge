@@ -1,6 +1,5 @@
 package com.kds.serviceabilitycal;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kds.serviceabilitycal.calculator.ServiceabilityCalculator;
 import com.kds.serviceabilitycal.model.Application;
 import com.kds.serviceabilitycal.reader.FileReaderService;
@@ -9,12 +8,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.util.ResourceUtils;
 
-import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.Scanner;
 
 @SpringBootApplication
@@ -24,18 +20,15 @@ public class ServiceabilityCalApplication implements CommandLineRunner {
 
 	private ServiceabilityCalculator serviceabilityCalculator;
 	private FileReaderService fileReaderService;
-	private ObjectMapper objectMapper;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ServiceabilityCalApplication.class, args);
 	}
 
 	public ServiceabilityCalApplication(ServiceabilityCalculator serviceabilityCalculator,
-										FileReaderService fileReaderService,
-										ObjectMapper objectMapper) {
+										FileReaderService fileReaderService) {
 		this.serviceabilityCalculator = serviceabilityCalculator;
 		this.fileReaderService = fileReaderService;
-		this.objectMapper = objectMapper;
 	}
 
 	@Override
@@ -48,9 +41,16 @@ public class ServiceabilityCalApplication implements CommandLineRunner {
 		String filePath = scanner.nextLine();
 
 		Application application = fileReaderService.readApplication(filePath);
-		BigDecimal serviceability = serviceabilityCalculator.calculate(application);
+		Optional<BigDecimal> serviceability = serviceabilityCalculator.calculate(application);
 
-		LOGGER.info("Serviceability for the given application : {}", serviceability);
+		if (serviceability.isPresent()) {
+			LOGGER.info("Serviceability for the given application : {}", serviceability);
+		}
+		else {
+			LOGGER.info("Serviceability for the given application cannot be calculated," +
+					" Please check the validity of the given loan application for non-empty" +
+					"income and expenses list.");
+		}
 	}
 
 }

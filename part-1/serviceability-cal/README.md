@@ -39,8 +39,7 @@ Enter the absolute path for the application.json file:
 
 ### Assumptions
 
-##### The loan Application contract is as follows, any loan Application submitted to this CLI application
-should honer this contract.
+##### The loan Application contract is as follows, any loan Application submitted to this CLI application should honer this contract.
 ```
 {
   "incomes": [

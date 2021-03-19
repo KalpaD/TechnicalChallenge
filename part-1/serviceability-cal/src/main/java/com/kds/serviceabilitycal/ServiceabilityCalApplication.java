@@ -35,16 +35,21 @@ public class ServiceabilityCalApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		LOGGER.info("Serviceability Calculator Running");
 
-		Scanner scanner = new Scanner(System.in);
-		LOGGER.info("Enter the absolute path for the application.json file: ");
-
-		String filePath = scanner.nextLine();
+		String filePath;
+		if (args.length < 1) {
+			LOGGER.info("Enter the absolute path for the application.json file: ");
+			Scanner scanner = new Scanner(System.in);
+			filePath = scanner.nextLine();
+		}
+		else {
+			filePath = args[0];
+		}
 
 		Application application = fileReaderService.readApplication(filePath);
 		Optional<BigDecimal> serviceability = serviceabilityCalculator.calculate(application);
 
 		if (serviceability.isPresent()) {
-			LOGGER.info("Serviceability for the given application : {}", serviceability);
+			LOGGER.info("Serviceability for the given application : {}", serviceability.get());
 		}
 		else {
 			LOGGER.info("Serviceability for the given application cannot be calculated," +

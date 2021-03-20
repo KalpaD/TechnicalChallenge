@@ -1,26 +1,33 @@
 package com.kds.serviceabilitycal.calculator;
 
+import com.kds.serviceabilitycal.exception.ApplicationException;
 import com.kds.serviceabilitycal.model.Application;
 import com.kds.serviceabilitycal.model.Frequency;
 import com.kds.serviceabilitycal.model.Item;
+import com.kds.serviceabilitycal.validator.ApplicationValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.validation.ConstraintViolation;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class FactorBasedServiceabilityCalculator implements ServiceabilityCalculator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FactorBasedServiceabilityCalculator.class);
+    private ApplicationValidator validator;
     private BigDecimal factor;
 
     @Autowired
-    public FactorBasedServiceabilityCalculator(@Value("${factor}") BigDecimal factor) {
+    public FactorBasedServiceabilityCalculator(@Value("${factor}") BigDecimal factor,
+                                               ApplicationValidator validator) {
+        this.validator = validator;
         this.factor = factor;
     }
 
@@ -35,17 +42,21 @@ public class FactorBasedServiceabilityCalculator implements ServiceabilityCalcul
      */
     @Override
     public Optional<BigDecimal> calculate(Application application) {
-        return Optional.ofNullable(application)
-                .filter(this::validateApplication)
+        return Optional.of(application)
+                .map(this::validateApplication)
                 .map(app -> calculateMonthlyIncome(application)
                         .subtract(calculateMonthlyExpenses(application))
                         .multiply(factor));
     }
 
-    private boolean validateApplication(Application application) {
-        boolean isValid = !application.getIncomes().isEmpty() && !application.getExpenses().isEmpty();
-        LOGGER.warn("Loan application validity status : {}", isValid);
-        return isValid;
+    private Application validateApplication(Application application) {
+        Set<ConstraintViolation<Application>> violations = validator.validate(application);
+        if (!violations.isEmpty()) {
+            String errorMessage = validator.toErrorMessage(violations);
+            LOGGER.error("Invalid loan application, The following list of violation detected:\n {}", errorMessage);
+            throw new ApplicationException(String.format("Invalid application : %s", errorMessage));
+        }
+        return application;
     }
 
     private BigDecimal calculateMonthlyIncome(Application application) {

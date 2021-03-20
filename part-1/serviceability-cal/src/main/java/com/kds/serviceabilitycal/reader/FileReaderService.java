@@ -1,6 +1,8 @@
 package com.kds.serviceabilitycal.reader;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kds.serviceabilitycal.exception.ApplicationException;
 import com.kds.serviceabilitycal.model.Application;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,8 +22,12 @@ public class FileReaderService {
         this.objectMapper = objectMapper;
     }
 
-    public Application readApplication(String path) throws IOException {
-        String content = Files.readString(Paths.get(path), StandardCharsets.UTF_8);
-        return objectMapper.readValue(content, Application.class);
+    public Application readApplication(String path) {
+        try {
+            String content = Files.readString(Paths.get(path), StandardCharsets.UTF_8);
+            return objectMapper.readValue(content, Application.class);
+        } catch (IOException e) {
+            throw new ApplicationException("Invalid application : Error while reading application", e);
+        }
     }
 }

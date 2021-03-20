@@ -2,26 +2,33 @@ package com.kds.serviceabilitycal.calculator;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kds.serviceabilitycal.exception.ApplicationException;
 import com.kds.serviceabilitycal.model.Application;
 import com.kds.serviceabilitycal.util.FileUtil;
+import com.kds.serviceabilitycal.validator.ApplicationValidator;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FactorBasedServiceabilityCalculatorTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FactorBasedServiceabilityCalculatorTest.class);
-
     private FactorBasedServiceabilityCalculator factorBasedServiceabilityCalculator;
+    private ApplicationValidator applicationValidator;
     private ObjectMapper objectMapper = new ObjectMapper();
 
+    @BeforeEach
+    public void setUp() {
+        applicationValidator = new ApplicationValidator();
+        // set the factor
+        BigDecimal factor = BigDecimal.valueOf(1);
+        factorBasedServiceabilityCalculator = new FactorBasedServiceabilityCalculator(factor, applicationValidator);
+    }
 
     @Test
     void shouldCalculateFactorBasedServiceability_WhenFactorIs_2() throws JsonProcessingException {
@@ -29,11 +36,11 @@ class FactorBasedServiceabilityCalculatorTest {
         String stringFromFile = FileUtil.getStringFromFile("application-with-full-data.json");
         Application application = objectMapper.readValue(stringFromFile, Application.class);
 
+        applicationValidator = new ApplicationValidator();
         // set the factor
         BigDecimal factor = BigDecimal.valueOf(2);
-        factorBasedServiceabilityCalculator = new FactorBasedServiceabilityCalculator(factor);
+        factorBasedServiceabilityCalculator = new FactorBasedServiceabilityCalculator(factor, applicationValidator);
 
-        LOGGER.info("result {}",factorBasedServiceabilityCalculator.calculate(application));
         Optional<BigDecimal> result = factorBasedServiceabilityCalculator.calculate(application);
         assertTrue(result.isPresent());
         assertEquals(0, BigDecimal.valueOf(2374.00).compareTo(result.get()));
@@ -45,43 +52,38 @@ class FactorBasedServiceabilityCalculatorTest {
         String stringFromFile = FileUtil.getStringFromFile("application-with-full-data.json");
         Application application = objectMapper.readValue(stringFromFile, Application.class);
 
-        // set the factor
-        BigDecimal factor = BigDecimal.valueOf(1);
-        factorBasedServiceabilityCalculator = new FactorBasedServiceabilityCalculator(factor);
-
-        LOGGER.info("result {}", factorBasedServiceabilityCalculator.calculate(application));
         Optional<BigDecimal> result = factorBasedServiceabilityCalculator.calculate(application);
         assertTrue(result.isPresent());
         assertEquals(0, BigDecimal.valueOf(1187.00).compareTo(result.get()));
     }
 
     @Test
-    void shouldReturnEmptyData_WhenIncomeListIsEmpty() throws JsonProcessingException {
+    void shouldThrowException_WhenIncomeListIsEmpty() throws JsonProcessingException {
         // load load application
         String stringFromFile = FileUtil.getStringFromFile("application-without-income-list.json");
         Application application = objectMapper.readValue(stringFromFile, Application.class);
 
-        // set the factor
-        BigDecimal factor = BigDecimal.valueOf(1);
-        factorBasedServiceabilityCalculator = new FactorBasedServiceabilityCalculator(factor);
-
-        LOGGER.info("result {}",factorBasedServiceabilityCalculator.calculate(application));
-        Optional<BigDecimal> result = factorBasedServiceabilityCalculator.calculate(application);
-        assertFalse(result.isPresent());
+        ApplicationException exception = assertThrows(ApplicationException.class, () -> factorBasedServiceabilityCalculator.calculate(application));
+        assertEquals("Invalid application : incomes list must contain at least one item", exception.getMessage());
     }
 
     @Test
-    void shouldReturnEmptyData_WhenExpensesListIsEmpty() throws JsonProcessingException {
+    void shouldThrowException_WhenExpensesListIsEmpty() throws JsonProcessingException {
         // load load application
         String stringFromFile = FileUtil.getStringFromFile("application-without-expenses-list.json");
         Application application = objectMapper.readValue(stringFromFile, Application.class);
 
-        // set the factor
-        BigDecimal factor = BigDecimal.valueOf(1);
-        factorBasedServiceabilityCalculator = new FactorBasedServiceabilityCalculator(factor);
+        ApplicationException exception = assertThrows(ApplicationException.class, () -> factorBasedServiceabilityCalculator.calculate(application));
+        assertEquals("Invalid application : expenses list must contain at least one item", exception.getMessage());
+    }
 
-        LOGGER.info("result {}",factorBasedServiceabilityCalculator.calculate(application));
-        Optional<BigDecimal> result = factorBasedServiceabilityCalculator.calculate(application);
-        assertFalse(result.isPresent());
+    @Test
+    void shouldThrowException_WhenIncompleteItemDetected() throws JsonProcessingException {
+        // load load application
+        String stringFromFile = FileUtil.getStringFromFile("application-with-incomplete-income-item.json");
+        Application application = objectMapper.readValue(stringFromFile, Application.class);
+
+        ApplicationException exception = assertThrows(ApplicationException.class, () -> factorBasedServiceabilityCalculator.calculate(application));
+        assertEquals("Invalid application : value cannot be null", exception.getMessage());
     }
 }

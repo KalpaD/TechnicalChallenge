@@ -2,15 +2,22 @@ package com.kds.serviceabilitycal.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 public class Item {
 
     @JsonProperty("description")
+    @NotBlank(message = "description cannot be empty or null")
     private String description;
+
     @JsonProperty("frequency")
+    @NotNull(message = "frequency cannot null")
     private Frequency frequency;
+
     @JsonProperty("value")
+    @NotNull(message = "value cannot be null")
     private BigDecimal value;
 
     public Item() {

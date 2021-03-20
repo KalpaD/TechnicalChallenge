@@ -4,18 +4,15 @@ import com.kds.serviceabilitycal.calculator.ServiceabilityCalculator;
 import com.kds.serviceabilitycal.exception.ApplicationException;
 import com.kds.serviceabilitycal.model.Application;
 import com.kds.serviceabilitycal.reader.FileReaderService;
-import com.kds.serviceabilitycal.validator.ApplicationValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import javax.validation.ConstraintViolation;
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.Scanner;
-import java.util.Set;
 
 @SpringBootApplication
 public class ServiceabilityCalApplication implements CommandLineRunner {
@@ -51,11 +48,10 @@ public class ServiceabilityCalApplication implements CommandLineRunner {
 
 		try {
 			Application application = fileReaderService.readApplication(filePath);
-			Optional<BigDecimal> serviceability = serviceabilityCalculator.calculate(application);
-			LOGGER.info("Serviceability for the given application : {}", serviceability.get());
+			BigDecimal serviceability = serviceabilityCalculator.calculate(application);
+			LOGGER.info("Serviceability for the given application : {}", serviceability);
 		} catch (ApplicationException e) {
 			LOGGER.error("Error : ", e);
-			return;
 		}
 	}
 

@@ -10,11 +10,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FactorBasedServiceabilityCalculatorTest {
 
@@ -41,9 +39,8 @@ class FactorBasedServiceabilityCalculatorTest {
         BigDecimal factor = BigDecimal.valueOf(2);
         factorBasedServiceabilityCalculator = new FactorBasedServiceabilityCalculator(factor, applicationValidator);
 
-        Optional<BigDecimal> result = factorBasedServiceabilityCalculator.calculate(application);
-        assertTrue(result.isPresent());
-        assertEquals(0, BigDecimal.valueOf(2374.00).compareTo(result.get()));
+        BigDecimal result = factorBasedServiceabilityCalculator.calculate(application);
+        assertEquals(0, BigDecimal.valueOf(2374.00).compareTo(result));
     }
 
     @Test
@@ -52,9 +49,8 @@ class FactorBasedServiceabilityCalculatorTest {
         String stringFromFile = FileUtil.getStringFromFile("application-with-full-data.json");
         Application application = objectMapper.readValue(stringFromFile, Application.class);
 
-        Optional<BigDecimal> result = factorBasedServiceabilityCalculator.calculate(application);
-        assertTrue(result.isPresent());
-        assertEquals(0, BigDecimal.valueOf(1187.00).compareTo(result.get()));
+        BigDecimal result = factorBasedServiceabilityCalculator.calculate(application);
+        assertEquals(0, BigDecimal.valueOf(1187.00).compareTo(result));
     }
 
     @Test

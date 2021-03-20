@@ -41,12 +41,11 @@ public class FactorBasedServiceabilityCalculator implements ServiceabilityCalcul
      * @return Serviceability of the given application, for invalid Application empty data will be emitted.
      */
     @Override
-    public Optional<BigDecimal> calculate(Application application) {
-        return Optional.of(application)
-                .map(this::validateApplication)
-                .map(app -> calculateMonthlyIncome(application)
-                        .subtract(calculateMonthlyExpenses(application))
-                        .multiply(factor));
+    public BigDecimal calculate(Application application) {
+        Application validateApplication = validateApplication(application);
+        return calculateMonthlyIncome(validateApplication)
+                        .subtract(calculateMonthlyExpenses(validateApplication))
+                        .multiply(factor);
     }
 
     private Application validateApplication(Application application) {

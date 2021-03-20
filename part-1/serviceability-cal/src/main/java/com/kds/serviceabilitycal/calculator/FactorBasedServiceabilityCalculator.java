@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import javax.validation.ConstraintViolation;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -34,7 +33,7 @@ public class FactorBasedServiceabilityCalculator implements ServiceabilityCalcul
     /**
      * Calculate the serviceability of a given loan application based on
      * pre defined factor.
-     *
+     * <p>
      * At the moment this method assumes there are only two frequencies for income and expenses.
      *
      * @param application A loan application.
@@ -44,8 +43,8 @@ public class FactorBasedServiceabilityCalculator implements ServiceabilityCalcul
     public BigDecimal calculate(Application application) {
         Application validateApplication = validateApplication(application);
         return calculateMonthlyIncome(validateApplication)
-                        .subtract(calculateMonthlyExpenses(validateApplication))
-                        .multiply(factor);
+                .subtract(calculateMonthlyExpenses(validateApplication))
+                .multiply(factor);
     }
 
     private Application validateApplication(Application application) {

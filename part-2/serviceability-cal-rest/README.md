@@ -188,7 +188,7 @@ execute commands via eb tool.
   
 3. Now you should be able to access the serviceability api at the following endpoint
    ```
-   curl --location --request POST 'http://serviceability-cal.ap-southeast-2.elasticbeanstalk.com:80/api/serviceability/calculate' \
+   curl --location --request POST 'http://serviceability-cal.ap-southeast-2.elasticbeanstalk.com:80/api/v1/serviceability/calculate' \
    --header 'Content-Type: application/json' \
    --data-raw '{
      "incomes": [

@@ -29,4 +29,13 @@ public class ServiceabilityResponse {
     public void setErrors(List<Error> errors) {
         this.errors = errors;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("ServiceabilityResponse{");
+        sb.append("serviceability=").append(serviceability);
+        sb.append(", errors=").append(errors);
+        sb.append('}');
+        return sb.toString();
+    }
 }

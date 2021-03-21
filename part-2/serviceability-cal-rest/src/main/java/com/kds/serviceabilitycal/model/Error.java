@@ -25,4 +25,13 @@ public class Error {
     public void setMessage(String message) {
         this.message = message;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Error{");
+        sb.append("code='").append(code).append('\'');
+        sb.append(", message='").append(message).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
 }

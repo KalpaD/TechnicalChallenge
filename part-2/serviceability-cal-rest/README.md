@@ -102,7 +102,53 @@ execute commands via eb tool.
    Do you want to set up SSH for your instances?
    (Y/n): n
    ```
- 3. Start the deployment of the application by 
+ 3. At this point eb tool will create a config.yml file at `.elasticbeanstalk/config.yml` which should have the following configurations
+    ```
+    branch-defaults:
+      default:
+        environment: null
+        group_suffix: null
+    global:
+      application_name: serviceability-cal-rest
+      branch: null
+      default_ec2_keyname: null
+      default_platform: Corretto 11 running on 64bit Amazon Linux 2
+      default_region: ap-southeast-2
+      include_git_submodules: true
+      instance_profile: null
+      platform_name: null
+      platform_version: null
+      profile: eb-cli
+      repository: null
+      sc: null
+      workspace_type: Application
+
+    ```
+    Please add the deployment element which point the `deploya.rtifact`
+    ```
+    branch-defaults:
+      default:
+        environment: serviceability-cal-rest-dev
+        group_suffix: null
+    deploy:
+      artifact: build/libs/serviceability-cal-rest-1.0.1.jar
+    global:
+      application_name: serviceability-cal-rest
+      branch: null
+      default_ec2_keyname: null
+      default_platform: Corretto 11 running on 64bit Amazon Linux 2
+      default_region: ap-southeast-2
+      include_git_submodules: true
+      instance_profile: null
+      platform_name: null
+      platform_version: null
+      profile: eb-cli
+      repository: null
+      sc: null
+      workspace_type: Application
+
+    ```
+ 4. Start the deployment of the application by 
    ```
    eb crease -s
 
@@ -176,3 +222,54 @@ execute commands via eb tool.
 
 ##### At the moment this method assumes there are only two frequencies for income and expenses.
 
+#### Answers to the additional questions.
+
+1. How would you “version” your service, so if the FACTOR or whole of the calculation changes you can replicate past results?
+
+   Answer : At the moment `build.gradle` file contains the version of the application.
+
+   ```
+    group = 'com.kds.serviceabilitycal'
+    version = '1.0.1'
+   
+
+   It follows the semantic visioning strategy.
+   However, if we are going to deploy this application to the production environment, there are few more aspects of versioning.
+    
+   For predictable deployment agnostic to the environment: We can containerized the application and tag it with the container application version and commit hash.
+    
+   For consumer transparency of the API: I have introduced the path-based version to the API.  
+    
+   If we have the correct version of the docker image, replicate past results is just a matter of deploying the correct image.
+    
+   ```
+2. How could you allow an internal party (external to Engineering) manage the FACTOR and calculation? Being able to transform or evolve it
+   as needed?
+   ![alt text](images/config-server.png)
+   ```
+    A typical external config server setup looks like the above.
+    
+    There are plenty of standard solutions for this in different frameworks and platforms.
+    Since we already have SpringBoot in this project, I would configure Spring Cloud Config Server, backed by a Git repository as shown in the above picture.
+    
+    Then we can expose an endpoint to the external party (with proper authorization and audit log) to update the
+    git repository when they want to update the FACTOR.
+
+  
+   ```
+3. Please describe how would you deal with authorisation? E.g. how can you guarantee only “approved” consumers can access your service?
+   ```
+   It depends on the use of this endpoint/service.
+   
+   1. If this service only expose to other services in the same network boundary, we can use 
+      basic auth with generic account set up with audit information, for example, use Cyber Arc Vault.
+   
+   2. If this endpoint exposed to the public internet, then we can use Oauth 2.0 access_token with a properly defined scope (craft for the level of authorization required)
+      For example, we can use API manager product to proxy this endpoint, and only after validating the access_token
+      users will be able to invoke this endpoint.
+   
+   3. If we do not want a heavy weight API manager, then we can delegate authorization to third-party
+      identity and access management services like Okta or OAuth0 , Pind identity.
+      They manage the access_token management and introspective endpoints. 
+      This endpoint asks them the question, is this request authorized to have access to invoke me?
+   ```

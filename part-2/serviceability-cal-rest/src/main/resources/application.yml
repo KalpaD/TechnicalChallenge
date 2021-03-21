@@ -1,0 +1,4 @@
+server.port: 5000
+spring.main.banner-mode: off
+
+factor: 1

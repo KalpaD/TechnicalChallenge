@@ -1,0 +1,26 @@
+{
+  "incomes": [
+    {
+      "description": "salary",
+      "frequency": "M",
+      "value": 1000.00
+    },
+    {
+      "description": "rental income",
+      "frequency": "M",
+      "value": 400.00
+    }
+  ],
+  "expenses": [
+    {
+      "description": "mortgage",
+      "frequency": "M",
+      "value": 200.00
+    },
+    {
+      "description": "entertainment",
+      "frequency": "M",
+      "value": 13.00
+    }
+  ]
+}

@@ -1,3 +1,15 @@
 # TechnicalChallenge
 
-## Please refer the README.md files in the part-1/serviceability-cal and part-2/serviceability-cal-rest for instrcution related to part1 and part2 of the technical challenge.
+## Implemataion has been divided in to two sections as per the challenge description.
+
+
+## Challenge Part 1 
+  ### Serviceability Calculator CLI Application
+  #### part-1/serviceability-cal contains the CLI application
+
+## Challenge Part 2
+  ### Serviceability Calculator RESTFul API
+  #### part-2/serviceability-cal-rest contains the microservice which expose the `/api/v1/serviceability/calculate` endpoint.
+
+
+

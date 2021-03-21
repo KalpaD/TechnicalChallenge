@@ -181,7 +181,7 @@ execute commands via eb tool.
    2021-03-20 21:01:59    INFO    Successfully launched environment: serviceability-cal-rest-dev
    ```
   
-3. Now you should be able to access the serviceability api at the following endpoint
+5.Now you should be able to access the serviceability api at the following endpoint
    ```
    curl --location --request POST 'http://serviceability-cal.ap-southeast-2.elasticbeanstalk.com:80/api/v1/serviceability/calculate' \
    --header 'Content-Type: application/json' \

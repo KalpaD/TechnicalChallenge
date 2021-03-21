@@ -20,27 +20,9 @@ cd part-1/serviceability-cal
 You can run the application from the command line using:
 ```
 ./gradlew bootRun --args '<PATH_TO_LOAN_APPLICATION>/application-with-full-data.json'
-```
-Or you can build a single executable JAR file that contains all the necessary dependencies, classes, and resources with:
-```
-./gradlew clean build
-```
-Then you can run the JAR file with:
-```
-cd build/libs
-java -jar *.jar
-```
-application will prompt you to enter the absolute path for the application file.
-```
-Enter the absolute path for the application.json file:
 
-<PATH_TO_LOAN_APPLICATION>/application-with-full-data.json
-```
+with following JSON content in the application-with-full-data.json file
 
-### Assumptions
-
-##### The loan Application contract is as follows, any loan Application submitted to this CLI application should honer this contract.
-```
 {
   "incomes": [
     {
@@ -67,7 +49,25 @@ Enter the absolute path for the application.json file:
     }
   ]
 }
+
 ```
+Or you can build a single executable JAR file that contains all the necessary dependencies, classes, and resources with:
+```
+./gradlew clean build
+```
+Then you can run the JAR file with:
+```
+cd build/libs
+java -jar *.jar
+```
+application will prompt you to enter the absolute path for the application file.
+```
+Enter the absolute path for the application.json file:
+
+<PATH_TO_LOAN_APPLICATION>/application-with-full-data.json
+```
+
+### Assumptions
 
 ##### At the moment this method assumes there are only two frequencies for income and expenses.
 

@@ -245,6 +245,7 @@ execute commands via eb tool.
    ```
 2. How could you allow an internal party (external to Engineering) manage the FACTOR and calculation? Being able to transform or evolve it
    as needed?
+   
    ![alt text](images/config-server.png)
    ```
     A typical external config server setup looks like the above.

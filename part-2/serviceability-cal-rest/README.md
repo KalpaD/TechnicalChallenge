@@ -156,11 +156,6 @@ execute commands via eb tool.
       (default is serviceability-cal-rest-dev):
       Enter DNS CNAME prefix
       (default is serviceability-cal-rest-dev): serviceability-cal
-
-   Enter Environment Name
-   (default is serviceability-cal-rest-dev):
-   Enter DNS CNAME prefix
-   (default is serviceability-cal-rest-dev): serviceability-cal
    
    Would you like to enable Spot Fleet requests for this environment? (y/N): n
    Uploading: [##################################################] 100% Done...
